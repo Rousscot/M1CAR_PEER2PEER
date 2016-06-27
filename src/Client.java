@@ -18,8 +18,17 @@ public class Client {
             if(!directory.exists()){
                 throw new FileNotFoundException();
             }
-            Peer peer = new PeerImpl(root, directory);
+            PeerImpl peer = new PeerImpl(root, directory);
             this.log("Peer created.");
+
+            String id;
+            try{
+                id = peer.getNodeName();
+            } catch (RemoteException e){
+                id = "Error while printing";
+            }
+            
+            new NodeUI(id, peer);
         } catch (MalformedURLException e) {
             this.log("Bad URL. Please try again with a better argument.");
             System.exit(100);

@@ -41,7 +41,6 @@ public class PeerImpl extends PortableRemoteObject implements Peer {
         }
     }
 
-    @Override
     public byte[] getFile(String fileName) {
 
         //TODO
@@ -49,12 +48,10 @@ public class PeerImpl extends PortableRemoteObject implements Peer {
         return new byte[0];
     }
 
-    @Override
     public Boolean isRoot() {
         return false;
     }
 
-    @Override
     public void addPeer(Peer peer) throws RemoteException, PeerAlreadyExistException {
         if(this.getPeers().contains(peer)){
             throw new PeerAlreadyExistException(peer);
@@ -83,7 +80,6 @@ public class PeerImpl extends PortableRemoteObject implements Peer {
         this.nodeName = nodeName;
     }
 
-    @Override
     public Set<Peer> getPeers() throws RemoteException{
         return this.peers;
     }
@@ -98,5 +94,13 @@ public class PeerImpl extends PortableRemoteObject implements Peer {
 
     public void setDirectory(File directory) {
         this.directory = directory;
+    }
+
+    public String toString(){
+        try {
+            return this.getNodeName();
+        } catch (RemoteException e) {
+            return "Error while printing";
+        }
     }
 }

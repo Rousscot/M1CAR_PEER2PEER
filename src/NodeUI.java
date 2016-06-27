@@ -2,48 +2,37 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
 public class NodeUI extends JFrame {
 
-    protected JList lnode;
-    protected JList lfile;
+    protected JList<Peer> lnode;
+    protected JList<File> lfile;
     protected JButton brefresh;
     protected JButton bfiles;
     protected JButton bdownload;
     protected PeerImpl _peer;
-    protected SharedDirectory _fs;
+    //protected SharedDirectory _fs;
 
-    public NodeUI(String id, PeerImpl peer, SharedDirectory fs) {
+    public NodeUI(String id, PeerImpl peer/*, SharedDirectory fs*/) {
         super(id);
         this._peer = peer;
-        this._fs = fs;
+        //this._fs = fs;
         this.init();
         this.pack();
         this.setVisible(true);
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
 
-    public static void main(String args[]) {
-
-        if (args.length < 4) {
-            System.err.println("usage : java EBidet id path isroot rootname");
-            System.exit(0);
-        }
-
-        //NodeUI UI = new NodeUI("essai");
-        NodeUI ui = new NodeUI(id, peer, fs);
-
-    }
-
     public void init() {
 
         /* list of peers */
-        this.lnode = new JList();
+        this.lnode = new JList<>();
         JScrollPane scrollPaneln = new JScrollPane(lnode);
         scrollPaneln.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
 		/* list of file for a selected node */
-        this.lfile = new JList();
+        this.lfile = new JList<>();
         JScrollPane scrollPanelf = new JScrollPane(lfile);
         scrollPanelf.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
@@ -72,9 +61,7 @@ public class NodeUI extends JFrame {
     class RefreshListener implements ActionListener {
         public void actionPerformed(ActionEvent evt) {
             try {
-                lnode.setListData(new String[0]);
-                _peer.directory().keySet().toArray();
-                lfile.setListData(new String[0]);
+                lnode.setListData(_peer.getPeers().toArray(new Peer[0]));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -83,30 +70,30 @@ public class NodeUI extends JFrame {
 
     class FilesListener implements ActionListener {
         public void actionPerformed(ActionEvent evt) {
-            try {
+            /*try {
                 lfile.setListData(new String[0]);
                 String nname = (String) lnode.getSelectedValue();
                 if (nname == null) return;
                 lfile.setListData(_peer.directory().get(nname).files());
             } catch (Exception e) {
                 e.printStackTrace();
-            }
+            }*/
         }
     }
 
     class DownloadListener implements ActionListener {
         public void actionPerformed(ActionEvent evt) {
-            try {
+            /*try {
                 String nname = (String) lnode.getSelectedValue();
                 String fname = (String) lfile.getSelectedValue();
                 if (nname == null || fname == null) return;
                 /* get the peer reference, then ask it the file */
-                Peer p = _peer.directory().get(nname);
+                /*Peer p = _peer.directory().get(nname);
                 byte[] fvalue = p.getFile(fname);
                 _fs.put(fname, fvalue);
             } catch (Exception e) {
                 e.printStackTrace();
-            }
+            }*/
         }
     }
 
