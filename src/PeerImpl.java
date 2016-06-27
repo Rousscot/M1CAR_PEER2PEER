@@ -10,13 +10,35 @@ public class PeerImpl extends PortableRemoteObject implements Peer {
 
     protected String nodeName;
     protected Root root;
-    protected Set<Peer> nodes;
+    protected Set<Peer> peers;
     protected File directory;
 
     protected PeerImpl(Root root, File directory) throws RemoteException {
         super();
-        this.root = root;
-        this.directory = directory;
+        this.setRoot(root);
+        this.setDirectory(directory);
+        this.init();
+    }
+
+    public void init() throws RemoteException {
+
+        this.setPeers(this.getRoot().getPeers());
+
+        this.getPeers().forEach(peer -> {
+            try {
+                peer.addPeer(this);
+            } catch (RemoteException | PeerAlreadyExistException e) {
+                //TODO
+                e.printStackTrace();
+            }
+        });
+
+        try {
+            this.getRoot().addPeer(this);
+        } catch (PeerAlreadyExistException e) {
+            //TODO
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -32,6 +54,14 @@ public class PeerImpl extends PortableRemoteObject implements Peer {
         return false;
     }
 
+    @Override
+    public void addPeer(Peer peer) throws RemoteException, PeerAlreadyExistException {
+        if(this.getPeers().contains(peer)){
+            throw new PeerAlreadyExistException(peer);
+        }
+        this.getPeers().add(peer);
+    }
+
     public Root getRoot() {
         return this.root;
     }
@@ -40,7 +70,7 @@ public class PeerImpl extends PortableRemoteObject implements Peer {
         this.root = root;
     }
 
-    public String getNodeName() {
+    public String getNodeName() throws RemoteException {
          if(this.nodeName == null){
              this.setNodeName(this.root.nextNodeName());
              return this.nodeName;
@@ -54,11 +84,19 @@ public class PeerImpl extends PortableRemoteObject implements Peer {
     }
 
     @Override
-    public Set<Peer> getNodes() {
-        return this.nodes;
+    public Set<Peer> getPeers() throws RemoteException{
+        return this.peers;
     }
 
-    public void setNodes(Set<Peer> nodes) {
-        this.nodes = nodes;
+    public void setPeers(Set<Peer> peers) {
+        this.peers = peers;
+    }
+
+    public File getDirectory() {
+        return directory;
+    }
+
+    public void setDirectory(File directory) {
+        this.directory = directory;
     }
 }

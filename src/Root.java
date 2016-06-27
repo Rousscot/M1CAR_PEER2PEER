@@ -5,10 +5,14 @@ import java.rmi.RemoteException;
  */
 public class Root extends PeerImpl{
 
-
     protected Root() throws RemoteException {
         super(null, null);
         this.nodeName = "root";
+    }
+
+    @Override
+    public void init(){
+        //Do nothing here
     }
 
     @Override
@@ -21,7 +25,7 @@ public class Root extends PeerImpl{
         return this;
     }
 
-    public String nextNodeName(){
-        return "Node" + getNodes().size() + 1;
+    public String nextNodeName() throws RemoteException {
+        return "Node" + getPeers().size() + 1;
     }
 }

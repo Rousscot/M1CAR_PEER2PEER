@@ -7,12 +7,16 @@ import java.util.Set;
  */
 public interface Peer extends Remote {
 
-    Set<Peer> getNodes() throws RemoteException;
+    Set<Peer> getPeers() throws RemoteException;
 
-    byte[] getFile(String fileName);
+    byte[] getFile(String fileName) throws RemoteException;
 
-    Boolean isRoot();
+    Boolean isRoot() throws RemoteException;
 
+    void addPeer(Peer peer) throws RemoteException, PeerAlreadyExistException;
 
+    void init() throws RemoteException;
+
+    String getNodeName() throws RemoteException;
 
 }

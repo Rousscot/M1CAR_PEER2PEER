@@ -49,6 +49,10 @@ public class Client {
         return root;
     }
 
+    /**
+     * I am a simple method to log some messages in the stdout.
+     * @param message The message to log.
+     */
     public void log(String message) {
         System.out.println("Client: " + message);
     }

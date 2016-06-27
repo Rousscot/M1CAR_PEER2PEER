@@ -37,7 +37,7 @@ public class NodeUI extends JFrame {
 
     public void init() {
 
-        /* list of nodes */
+        /* list of peers */
         this.lnode = new JList();
         JScrollPane scrollPaneln = new JScrollPane(lnode);
         scrollPaneln.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
