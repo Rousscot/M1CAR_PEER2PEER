@@ -25,6 +25,18 @@ public class RootImpl extends PeerImpl implements Root {
     }
 
     @Override
+    public void register(Peer peer) throws RemoteException{
+        this.peers.forEach( p -> {
+            try {
+                p.getPeers().add(this);
+            } catch (RemoteException ignore) {
+
+            }
+        });
+        this.peers.add(peer);
+    }
+
+    @Override
     public void unregister(Peer peer) throws RemoteException{
         //Do not replace with a forEach to avoid concurrency error
         Iterator<Peer> peerIterator = this.getPeers().iterator();

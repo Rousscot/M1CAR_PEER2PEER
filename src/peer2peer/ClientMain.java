@@ -11,8 +11,8 @@ public class ClientMain {
 
         String url = "rmi://"+args[0];
         String directoryPath = args[1];
+        new Client(url, directoryPath);
 
-        Client client = new Client(url, directoryPath);
     }
 
 }

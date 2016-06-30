@@ -23,19 +23,8 @@ public class PeerImpl extends UnicastRemoteObject implements Peer {
     @Override
     public void init(Root root) throws RemoteException{
         this.root = root;
-        this.peers = root.getPeers();
-
-        peers.forEach( peer -> {
-            try {
-                peer.register(this);
-            } catch (RemoteException e) {
-                e.printStackTrace(); //TODO
-            }
-        });
-
         this.register(this);
-        root.register(this);
-
+        this.peers = root.getPeers();
     }
 
     public Set<Peer> getPeers() throws RemoteException {
@@ -44,7 +33,7 @@ public class PeerImpl extends UnicastRemoteObject implements Peer {
 
     @Override
     public void register(Peer peer) throws RemoteException {
-        peers.add(peer);
+        this.root.register(peer);
     }
 
     @Override
@@ -74,16 +63,13 @@ public class PeerImpl extends UnicastRemoteObject implements Peer {
 
     @Override
     public IBuffer getBuffer(File file) throws IOException {
-        return new BufferImpl(new FileInputStream(directory + "/" + file.getName()));
+        return new BufferImpl(new FileInputStream(this.directory + "/" + file.getName()));
     }
 
     @Override
     public void download(File file, Peer peer) throws IOException {
 
-        File destination = new File(directory + "/" + file.getName());
-        FileOutputStream fos = new FileOutputStream(destination);
-        BufferedOutputStream bos = new BufferedOutputStream(fos);
-
+        BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(new File(this.directory + "/" + file.getName())));
         IBuffer bis = peer.getBuffer(file);
 
         while(bis.available() > 0)

@@ -92,9 +92,10 @@ public class NodeUI extends JFrame {
 
     public void unregister(Peer peer) {
         try {
+            this.checkRoot();
             this.peer.unregister(peer);
-            peers.setListData(this.peer.getPeers().toArray(new Peer[0]));
-            files.setListData(new File[0]);
+            this.peers.setListData(this.peer.getPeers().toArray(new Peer[0]));
+            this.files.setListData(new File[0]);
         } catch (RemoteException ignored) {
 
         }
@@ -104,8 +105,7 @@ public class NodeUI extends JFrame {
 
     public void setPeers(){
         try {
-            this.checkRoot();
-            peers.setListData(peer.getPeers().toArray(new Peer[0]));
+            this.peers.setListData(this.peer.getPeers().toArray(new Peer[0]));
         } catch (RemoteException e) {
             this.error("Sorry but there was an error.");
         }
@@ -113,13 +113,13 @@ public class NodeUI extends JFrame {
 
     public void setFiles(){
         this.checkRoot();
-        Peer selectedPeer = peers.getSelectedValue();
+        Peer selectedPeer = this.peers.getSelectedValue();
         File[] localFiles = new File[0];
         if (selectedPeer != null) {
             try {
                 localFiles = selectedPeer.getLocalFiles();
             } catch (RemoteException e) {
-                unregister(selectedPeer); //TODO check
+                this.unregister(selectedPeer);
             }
         }
         this.files.setListData(localFiles);
@@ -127,18 +127,17 @@ public class NodeUI extends JFrame {
 
     public void download(){
         this.checkRoot();
-        Peer selectedPeer = peers.getSelectedValue();
-        File selectedFile = files.getSelectedValue();
+        Peer selectedPeer = this.peers.getSelectedValue();
+        File selectedFile = this.files.getSelectedValue();
         try {
             if (selectedPeer != null && selectedFile != null) {
-                peer.download(selectedFile, selectedPeer);
+                this.peer.download(selectedFile, selectedPeer);
                 JOptionPane.showMessageDialog(this, "The file was downloaded.");
             } else {
                 this.error("You need to select a node and a file.");
             }
         } catch (IOException e) {
-            e.printStackTrace(); //TODO
-            unregister(selectedPeer);
+            this.unregister(selectedPeer);
         }
     }
 
