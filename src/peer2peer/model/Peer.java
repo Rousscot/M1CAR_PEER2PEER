@@ -1,7 +1,5 @@
 package peer2peer.model;
 
-import peer2peer.IBuffer;
-
 import java.io.IOException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;

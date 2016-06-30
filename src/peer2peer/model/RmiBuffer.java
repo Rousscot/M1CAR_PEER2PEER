@@ -1,10 +1,7 @@
-package peer2peer;
+package peer2peer.model;
 
 import java.io.*;
 
-/**
- * Created by sylvie on 17/06/16.
- */
 public class RmiBuffer extends BufferedInputStream implements Serializable{
 
     public RmiBuffer(FileInputStream in) {
