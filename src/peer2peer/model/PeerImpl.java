@@ -9,11 +9,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public class PeerImpl extends UnicastRemoteObject implements Peer {
 
     protected String peerName;
-    protected Peer root;
+    protected Root root;
     protected File directory;
     protected Map<String, Peer> peers;
 
-    public PeerImpl(Peer root, File directory) throws RemoteException {
+    public PeerImpl(Root root, File directory) throws RemoteException {
         super();
         this.peers = new ConcurrentHashMap<>();
         this.directory = directory;
@@ -21,7 +21,7 @@ public class PeerImpl extends UnicastRemoteObject implements Peer {
     }
 
     @Override
-    public void init(Peer root) throws RemoteException{
+    public void init(Root root) throws RemoteException{
         this.root = root;
         this.peers = root.getPeers();
 
@@ -35,6 +35,7 @@ public class PeerImpl extends UnicastRemoteObject implements Peer {
 
         this.register(this);
         root.register(this);
+
     }
 
     public Map<String, Peer> getPeers() throws RemoteException {
@@ -81,18 +82,18 @@ public class PeerImpl extends UnicastRemoteObject implements Peer {
     }
 
     @Override
-    public IBuffer getBuffer(String filename) throws IOException {
-        return new BufferImpl(new FileInputStream(directory + "/" + filename));
+    public IBuffer getBuffer(String fileName) throws IOException {
+        return new BufferImpl(new FileInputStream(directory + "/" + fileName));
     }
 
     @Override
-    public void download(String filename, String peerName) throws IOException {
+    public void download(String fileName, String nodeName) throws IOException {
 
-        File destination = new File(directory + "/" + filename);
+        File destination = new File(directory + "/" + fileName);
         FileOutputStream fos = new FileOutputStream(destination);
         BufferedOutputStream bos = new BufferedOutputStream(fos);
 
-        IBuffer bis = this.getPeers().get(peerName).getBuffer(filename);
+        IBuffer bis = this.getPeers().get(nodeName).getBuffer(fileName);
 
         while(bis.available() > 0)
         {

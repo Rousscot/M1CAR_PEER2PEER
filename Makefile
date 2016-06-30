@@ -30,7 +30,7 @@ compPeer:
 	@echo "__COMPILATION OF THE PEER2PEER PROJECT _____________"
 	mkdir -p $(DESFOLDER)
 	$(CC) $(DES) $(SRCCHE) $(SRCFOLDER)/**/*.java
-	$(RMIC) $(DESCHE) $(DES) peer2peer.model.PeerImpl
+	$(RMIC) $(DESCHE) $(DES) peer2peer.model.RootImpl
 	@echo "__COMPILATION DONE _________________________________"
 	@echo " "
 

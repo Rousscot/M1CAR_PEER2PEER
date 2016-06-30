@@ -7,7 +7,7 @@ import java.util.Map;
 
 public interface Peer extends Remote{
 
-    void init(Peer root) throws RemoteException;
+    void init(Root root) throws RemoteException;
 
     Map<String, Peer> getPeers() throws RemoteException;
 
@@ -21,7 +21,7 @@ public interface Peer extends Remote{
 
     boolean rootIsConnected() throws RemoteException;
 
-    IBuffer getBuffer(String filename) throws IOException;
+    IBuffer getBuffer(String fileName) throws IOException;
 
-    void download(String filename, String nodename) throws IOException;
+    void download(String fileName, String nodeName) throws IOException;
 }

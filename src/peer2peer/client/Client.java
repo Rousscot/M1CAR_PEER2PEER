@@ -4,6 +4,7 @@ import peer2peer.model.Peer;
 import peer2peer.model.PeerImpl;
 import peer2peer.model.Root;
 import peer2peer.gui.NodeUI;
+import peer2peer.model.RootImpl;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -36,7 +37,7 @@ public class Client {
     public Peer createPeer(String url, File directory) throws MalformedURLException, RemoteException {
 
         try {
-            Peer root = (Peer) Naming.lookup(url);
+            Root root = (Root) Naming.lookup(url);
             return new PeerImpl(root, directory);
         } catch (NotBoundException e) {
             return this.createRoot(directory);
@@ -44,8 +45,8 @@ public class Client {
 
     }
 
-    public Peer createRoot(File directory) throws RemoteException, MalformedURLException {
-        Root root = new Root(directory);
+    public Root createRoot(File directory) throws RemoteException, MalformedURLException {
+        Root root = new RootImpl(directory);
         Naming.rebind("peer2peer", root);
         return root;
     }
