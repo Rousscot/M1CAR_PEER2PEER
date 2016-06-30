@@ -4,13 +4,13 @@ import java.io.File;
 import java.io.IOException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import java.util.Map;
+import java.util.Set;
 
-public interface Peer extends Remote{
+public interface Peer extends Remote {
 
     void init(Root root) throws RemoteException;
 
-    Map<String, Peer> getPeers() throws RemoteException;
+    Set<Peer> getPeers() throws RemoteException;
 
     void register(Peer node) throws RemoteException;
 
@@ -20,7 +20,7 @@ public interface Peer extends Remote{
 
     String getPeerName() throws RemoteException;
 
-    boolean rootIsConnected() throws RemoteException;
+    boolean hasRoot() throws RemoteException;
 
     IBuffer getBuffer(File file) throws IOException;
 

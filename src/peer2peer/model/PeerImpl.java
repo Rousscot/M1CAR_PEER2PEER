@@ -3,19 +3,19 @@ package peer2peer.model;
 import java.io.*;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 public class PeerImpl extends UnicastRemoteObject implements Peer {
 
     protected String peerName;
     protected Root root;
     protected File directory;
-    protected Map<String, Peer> peers;
+    protected Set<Peer> peers;
 
     public PeerImpl(Root root, File directory) throws RemoteException {
         super();
-        this.peers = new ConcurrentHashMap<>();
+        this.peers = new HashSet<>();
         this.directory = directory;
         this.init(root);
     }
@@ -25,11 +25,11 @@ public class PeerImpl extends UnicastRemoteObject implements Peer {
         this.root = root;
         this.peers = root.getPeers();
 
-        peers.forEach((k, v) -> {
+        peers.forEach( peer -> {
             try {
-                v.register(this);
+                peer.register(this);
             } catch (RemoteException e) {
-                e.printStackTrace();
+                e.printStackTrace(); //TODO
             }
         });
 
@@ -38,21 +38,18 @@ public class PeerImpl extends UnicastRemoteObject implements Peer {
 
     }
 
-    public Map<String, Peer> getPeers() throws RemoteException {
+    public Set<Peer> getPeers() throws RemoteException {
         return this.peers;
     }
 
     @Override
     public void register(Peer peer) throws RemoteException {
-        if(!peers.containsValue(peer)){
-            peers.put(peer.getPeerName(),peer);
-        }
-        //TODO later I should raise an error here if the peer is already in the collection
+        peers.add(peer);
     }
 
     @Override
     public void unregister(Peer peer) throws RemoteException {
-        peers.remove(peer.getPeerName(), peer); //TODO
+        root.unregister(peer);
     }
 
     @Override
@@ -63,7 +60,7 @@ public class PeerImpl extends UnicastRemoteObject implements Peer {
     public String getPeerName() throws RemoteException {
         if(this.peerName == null){
             //TODO this is bad :P
-            this.peerName = "Peer" + this.getPeers().size();
+            this.peerName = "Peer" + (this.getPeers().size() - 1);
             return this.getPeerName();
         } else {
             return this.peerName;
@@ -71,8 +68,8 @@ public class PeerImpl extends UnicastRemoteObject implements Peer {
     }
 
     @Override
-    public boolean rootIsConnected() throws RemoteException {
-        return root.rootIsConnected();
+    public boolean hasRoot() throws RemoteException {
+        return root.hasRoot();
     }
 
     @Override
