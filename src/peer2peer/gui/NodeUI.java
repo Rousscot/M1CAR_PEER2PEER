@@ -4,12 +4,13 @@ import peer2peer.model.Peer;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 import java.rmi.RemoteException;
 
 public class NodeUI extends JFrame {
 
-    protected JList peers;
-    protected JList files;
+    protected JList<Peer> peers;
+    protected JList<File> files;
     protected JButton refreshPeersButton;
     protected JButton refreshFilesButton;
     protected JButton downloadButton;
@@ -44,29 +45,53 @@ public class NodeUI extends JFrame {
     }
 
     public JScrollPane initPeersList() {
-        this.peers = new JList();
+        this.peers = new JList<>();
         JScrollPane pane = new JScrollPane(peers);
-        pane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         this.peers.addListSelectionListener(evt -> {
-            verificationExistanceRoot();
-            files.setListData(new String[0]);
-            String nname = (String) peers.getSelectedValue();
-            String[] localFiles = new String[0];
-            if (nname != null) {
+            this.checkRoot();
+            this.files.setListData(new File[0]);
+            Peer selectedPeer = peers.getSelectedValue();
+            File[] localFiles = new File[0];
+            if (selectedPeer != null) {
                 try {
-                    localFiles = peer.getPeers().get(nname).getLocalFiles();
+                    localFiles = selectedPeer.getLocalFiles();
                 } catch (Exception e) {
-                    traitement(nname);
+                    traitement(selectedPeer);
                 }
                 files.setListData(localFiles);
             }
         });
+
+        this.peers.setCellRenderer(new DefaultListCellRenderer(){
+            public Component getListCellRendererComponent( JList list, Object value, int index, boolean isSelected, boolean cellHasFocus)
+            {
+                try {
+                    super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                    this.setText(((Peer) value).getPeerName());
+                } catch (RemoteException e) {
+                    e.printStackTrace(); //TODO
+                }
+                return this;
+            }
+        });
+
+        pane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         return pane;
     }
 
     public JScrollPane initFilesList() {
-        this.files = new JList();
+        this.files = new JList<>();
         JScrollPane pane = new JScrollPane(files);
+
+        this.files.setCellRenderer(new DefaultListCellRenderer(){
+            public Component getListCellRendererComponent( JList list, Object value, int index, boolean isSelected, boolean cellHasFocus)
+            {
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                this.setText(((File) value).getName());
+                return this;
+            }
+        });
+
         pane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         return pane;
     }
@@ -75,8 +100,8 @@ public class NodeUI extends JFrame {
         this.refreshPeersButton = new JButton("Peers");
         this.refreshPeersButton.addActionListener(evt -> {
             try {
-                verificationExistanceRoot();
-                peers.setListData(peer.getPeers().keySet().toArray(new String[0]));
+                checkRoot();
+                peers.setListData(peer.getPeers().values().toArray(new Peer[0]));
             } catch (RemoteException e) {
                 JOptionPane.showMessageDialog(null,
                         "Pb lors du rafraichissement des noeuds", /* TODO */
@@ -89,10 +114,10 @@ public class NodeUI extends JFrame {
         this.refreshFilesButton = new JButton("Files");
         this.refreshFilesButton.addActionListener(evt -> {
             try {
-                files.setListData(new String[0]);
-                String nname = (String) peers.getSelectedValue();
-                if (nname == null) return;
-                files.setListData(peer.getPeers().get(nname).getLocalFiles());
+                files.setListData(new File[0]);
+                Peer selectedPeer = peers.getSelectedValue();
+                if (selectedPeer == null) return;
+                files.setListData(selectedPeer.getLocalFiles());
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -102,45 +127,43 @@ public class NodeUI extends JFrame {
     public void initDownloadButton() {
         this.downloadButton = new JButton("Download");
         this.downloadButton.addActionListener(evt -> {
-            verificationExistanceRoot();
-            String nname = (String) peers.getSelectedValue();
-            String fname = (String) files.getSelectedValue();
+            checkRoot();
+            Peer selectedPeer = peers.getSelectedValue();
+            File selectedFile = files.getSelectedValue();
             try {
-                if (nname != null && fname != null) {
-                    peer.download(fname, nname);
+                if (selectedPeer != null && selectedFile != null) {
+                    peer.download(selectedFile, selectedPeer);
                     JOptionPane.showMessageDialog(null, "Le fichier a été téléchargé");
                 } else {
                     JOptionPane.showMessageDialog(null, "Veuillez choisir un noeud et un fichier");
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                traitement(nname);
+                traitement(selectedPeer);
             }
         });
     }
 
-    public void traitement(String nname) {
+    public void traitement(Peer peer) {
         try {
-            peer.unregister(nname);
-            peers.setListData(peer.getPeers().keySet().toArray(new String[0]));
-            files.setListData(new String[0]);
+            peer.unregister(peer);
+            peers.setListData(peer.getPeers().keySet().toArray(new Peer[0]));
+            files.setListData(new File[0]);
         } catch (RemoteException e1) {
             e1.printStackTrace();
         } finally {
-            JOptionPane.showMessageDialog(null,
+            JOptionPane.showMessageDialog(this,
                     "Pb lors du listing de fichiers, le client est déconnecté",
                     "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
-    public void verificationExistanceRoot() {
+    public void checkRoot() {
         try {
-            peer.rootIsConnected();
+            this.peer.rootIsConnected();
         } catch (RemoteException e) {
-            JOptionPane.showMessageDialog(null,
-                    "La communauté n'a plus de noeud Root, le programme va s'arrêter",
-                    "Error", JOptionPane.ERROR_MESSAGE);
-            System.exit(0);
+            JOptionPane.showMessageDialog(this, "The root of the community was disconnect. The client will close.", "Error", JOptionPane.ERROR_MESSAGE);
+            System.exit(104);
         }
     }
 

@@ -1,5 +1,6 @@
 package peer2peer.model;
 
+import java.io.File;
 import java.io.IOException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -13,15 +14,15 @@ public interface Peer extends Remote{
 
     void register(Peer node) throws RemoteException;
 
-    void unregister(String idNode) throws RemoteException;
+    void unregister(Peer peer) throws RemoteException;
 
-    String[] getLocalFiles() throws RemoteException;
+    File[] getLocalFiles() throws RemoteException;
 
     String getPeerName() throws RemoteException;
 
     boolean rootIsConnected() throws RemoteException;
 
-    IBuffer getBuffer(String fileName) throws IOException;
+    IBuffer getBuffer(File file) throws IOException;
 
-    void download(String fileName, String nodeName) throws IOException;
+    void download(File file, Peer peer) throws IOException;
 }

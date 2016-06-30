@@ -51,19 +51,13 @@ public class PeerImpl extends UnicastRemoteObject implements Peer {
     }
 
     @Override
-    public void unregister(String idNode) throws RemoteException {
-        peers.remove(idNode);
+    public void unregister(Peer peer) throws RemoteException {
+        peers.remove(peer.getPeerName(), peer); //TODO
     }
 
     @Override
-    public String[] getLocalFiles() throws RemoteException {
-        File[] files = this.directory.listFiles();
-        String[] localFiles = new String[files.length];
-
-        for (int i=0;i<files.length;i++){
-           localFiles[i]=files[i].getName();
-        }
-        return localFiles;
+    public File[] getLocalFiles() throws RemoteException {
+        return this.directory.listFiles();
     }
 
     public String getPeerName() throws RemoteException {
@@ -82,18 +76,18 @@ public class PeerImpl extends UnicastRemoteObject implements Peer {
     }
 
     @Override
-    public IBuffer getBuffer(String fileName) throws IOException {
-        return new BufferImpl(new FileInputStream(directory + "/" + fileName));
+    public IBuffer getBuffer(File file) throws IOException {
+        return new BufferImpl(new FileInputStream(directory + "/" + file.getName()));
     }
 
     @Override
-    public void download(String fileName, String nodeName) throws IOException {
+    public void download(File file, Peer peer) throws IOException {
 
-        File destination = new File(directory + "/" + fileName);
+        File destination = new File(directory + "/" + file.getName());
         FileOutputStream fos = new FileOutputStream(destination);
         BufferedOutputStream bos = new BufferedOutputStream(fos);
 
-        IBuffer bis = this.getPeers().get(nodeName).getBuffer(fileName);
+        IBuffer bis = peer.getBuffer(file);
 
         while(bis.available() > 0)
         {
@@ -105,10 +99,6 @@ public class PeerImpl extends UnicastRemoteObject implements Peer {
             bos.flush();
         }
         bis.close();
-    }
-
-    public Boolean isRoot() {
-        return false;
     }
 
 }

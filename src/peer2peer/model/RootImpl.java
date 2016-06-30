@@ -23,11 +23,4 @@ public class RootImpl extends PeerImpl implements Root {
         return true;
     }
 
-    @Override
-    public Boolean isRoot(){
-        return true;
-    }
-
-
-
 }
