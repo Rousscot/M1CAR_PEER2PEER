@@ -6,6 +6,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
 import java.rmi.RemoteException;
 
 public class NodeUI extends JFrame {
@@ -136,6 +137,8 @@ public class NodeUI extends JFrame {
             } else {
                 this.error("You need to select a peer and a file.");
             }
+        } catch (FileAlreadyExistsException e){
+            this.error("This file already exist in the destination folder.");
         } catch (IOException e) {
             this.unregister(selectedPeer);
         }

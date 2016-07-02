@@ -1,6 +1,7 @@
 package peer2peer.model;
 
 import java.io.*;
+import java.nio.file.FileAlreadyExistsException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.HashSet;
@@ -63,10 +64,14 @@ public class PeerImpl extends UnicastRemoteObject implements Peer {
     @Override
     public void downloadFrom(Peer peer, File file) throws IOException {
 
-        //TODO FileAlreadyExist ?
-        String destination = this.directory + "/" + file.getName();
-        BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(new File(destination)));
-        IBuffer bis = new BufferImpl(new FileInputStream(destination));
+        File newFile = new File(this.directory + "/" + file.getName());
+
+        if(newFile.exists()){
+            throw new FileAlreadyExistsException(file.getName());
+        }
+
+        BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(newFile));
+        IBuffer bis = new BufferImpl(new FileInputStream(newFile));
 
         while (bis.available() > 0) {
             byte[] toSend;
