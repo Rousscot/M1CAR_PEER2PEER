@@ -1,6 +1,8 @@
 DESFOLDER = classes
 SRCFOLDER = src
 DOCFOLDER = docs
+FOLDER = /home
+URL = localhost
 
 MANIFEST = META-INF/MANIFEST.MF
 JARNAME = peer2peer.jar
@@ -17,7 +19,7 @@ JAR = jar cvfm
 RMIC = rmic
 RMICREG = rmiregistry
 
-all: clean doc runClient1
+all: clean doc jar launchRMI runClient
 
 doc:
 	@echo "__GENERATION OF THE DOCUMENTATION __________________"
@@ -41,25 +43,23 @@ jar:
 	@echo "__JAR CREATED ______________________________________"
 	@echo " "
 
-runClient1:
-	@echo "__RUN THE PEER2PEER PROJECT WITH FIRST FOLDER ______"
-	make jar
+launchRMI:
+	@echo "__LAUNCH RMI REGISTRY ______________________________"
 	$(RMICREG) -J-cp -J$(JARNAME) &
-	$(RUNCMD) -jar $(JARNAME) localhost /Users/Cyril/rmiFolder
 
-runClient2:
-	@echo "__RUN THE PEER2PEER PROJECT WITH SECOND FOLDER _____"
-	$(RUNCMD) -jar $(JARNAME) localhost /Users/Cyril/rmiFolder2
+runClient:
+	@echo "__RUN THE PEER2PEER PROJECT ________________________"
+	$(RUNCMD) -jar $(JARNAME) $(URL) $(FOLDER)
 
 help:
-	@echo "__HELP ______________________________________________"
+	@echo "__HELP _____________________________________________"
 	@echo "You can use :"
 	@echo "all : This command will clean everything then create a jar and execute it with the first setup of the make file."
-	@echo "doc : product the doc of the project."
+	@echo "doc : Product the doc of the project."
 	@echo "compPeer : This command will compile the sources of the Peer project."
 	@echo "jar : Create a runnable jar for the project."
-	@echo "runClient1 : Run the jar with a first folder (that is hard coded for now :( If you want to use this makefile please change the folder in the runClient1 and runClient2 to use a real folder of your computer)."
-	@echo "runClient2 : Run the jar with a second folder."
+	@echo "launchRMI : Launch the RMI Registry."
+	@echo "runClient : I run the jar with a folder I take in parameter named FOLDER. Example: make FOLDER=/Users/Cyril/rmiFolder2 runClient"
 	@echo "help : Help with the Make file."
 	@echo "clean : Clean all the folders. (.class, jar, temp files, doc...)"
 
