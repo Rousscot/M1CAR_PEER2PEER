@@ -35,6 +35,10 @@ public class NodeUI extends JFrame {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         this.initButtons(panel);
         this.getContentPane().add(panel, BorderLayout.SOUTH);
+
+        this.setPeers();
+        this.setFiles();
+        this.selectFirstElementsOfLists();
     }
 
     public JScrollPane initPeersList() {
@@ -91,6 +95,17 @@ public class NodeUI extends JFrame {
         panel.add(this.downloadButton);
     }
 
+    public void selectFirstElementsOfLists() {
+        this.selectFirstElementOf(this.peers);
+        this.selectFirstElementOf(this.files);
+    }
+
+    public void selectFirstElementOf(JList list) {
+        if (list.getModel().getSize() > 0) {
+            list.setSelectedIndex(0);
+        }
+    }
+
     public void unregister(Peer peer) {
         try {
             this.checkRoot();
@@ -100,8 +115,8 @@ public class NodeUI extends JFrame {
         } catch (RemoteException ignored) {
 
         }
-
         this.error("Sorry but the client was disconnected.");
+        this.selectFirstElementsOfLists();
     }
 
     public void setPeers(){
@@ -110,6 +125,7 @@ public class NodeUI extends JFrame {
         } catch (RemoteException e) {
             this.error("Sorry but there was an error.");
         }
+        this.selectFirstElementsOfLists();
     }
 
     public void setFiles(){
@@ -124,6 +140,7 @@ public class NodeUI extends JFrame {
             }
         }
         this.files.setListData(localFiles);
+        this.selectFirstElementsOfLists();
     }
 
     public void downloadFile(){
