@@ -48,8 +48,7 @@ public class PeerImpl extends UnicastRemoteObject implements Peer {
 
     public String getPeerName() throws RemoteException {
         if (this.peerName == null) {
-            //TODO this is bad :P
-            this.peerName = "Peer" + (this.getPeers().size() - 1);
+            this.peerName = this.root.nextPeerName();
             return this.getPeerName();
         } else {
             return this.peerName;

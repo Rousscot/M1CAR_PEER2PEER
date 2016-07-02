@@ -9,9 +9,12 @@ import java.util.Iterator;
  */
 public class RootImpl extends PeerImpl implements Root {
 
+    protected Integer peerCounter;
+
     public RootImpl(File directory) throws RemoteException {
         super(null, directory);
         this.peerName = "root";
+        this.peerCounter = 0;
     }
 
     @Override
@@ -46,6 +49,11 @@ public class RootImpl extends PeerImpl implements Root {
                 p.getPeers().remove(peer);
             }
         }
+    }
+
+    public String nextPeerName() throws RemoteException{
+        this.peerCounter += 1;
+        return "Peer" + this.peerCounter;
     }
 
 }
