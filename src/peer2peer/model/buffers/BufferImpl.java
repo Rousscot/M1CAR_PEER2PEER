@@ -1,15 +1,18 @@
-package peer2peer.model;
+package peer2peer.model.buffers;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
+/**
+ * I am an implementation of an IBuffer.
+ * In fact I am just a decorator of a Buffer Input Stream that is serializable for RMI.
+ */
 public class BufferImpl extends UnicastRemoteObject implements IBuffer {
 
+    public final static Integer BLOCKSIZE = 4000;
     protected RmiBuffer bis;
-
-    protected final static Integer BLOCKSIZE = 4000;
 
     public BufferImpl(FileInputStream in) throws RemoteException {
         this.bis = new RmiBuffer(in);

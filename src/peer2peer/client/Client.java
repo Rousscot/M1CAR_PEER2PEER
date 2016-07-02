@@ -1,10 +1,10 @@
 package peer2peer.client;
 
-import peer2peer.model.Peer;
-import peer2peer.model.PeerImpl;
-import peer2peer.model.Root;
 import peer2peer.gui.NodeUI;
-import peer2peer.model.RootImpl;
+import peer2peer.model.peers.Peer;
+import peer2peer.model.peers.PeerImpl;
+import peer2peer.model.peers.Root;
+import peer2peer.model.peers.RootImpl;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -12,6 +12,10 @@ import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
+/**
+ * I am a Client that will launch the peer 2 peer client.
+ * If there is already a community, I will register to it. Else I will create the root of the community.
+ */
 public class Client {
 
     public Client(String url, String directoryPath) {
@@ -32,8 +36,17 @@ public class Client {
             this.log("There was an error during the lookup or the binding :(");
             System.exit(101);
         }
+
     }
 
+    /**
+     * I create a peer for the client. If there is no community I will create a root.
+     * @param url The url of the root.
+     * @param directory the directory to share.
+     * @return The created peer.
+     * @throws MalformedURLException raised if the url is bad.
+     * @throws RemoteException raised if there is a problem during the lookup or binding of the root.
+     */
     public Peer createPeer(String url, File directory) throws MalformedURLException, RemoteException {
 
         try {
@@ -45,6 +58,13 @@ public class Client {
 
     }
 
+    /**
+     * I create a root for the community.
+     * @param directory The directory to share.
+     * @return The root created.
+     * @throws RemoteException raised if there is an error during the binding.
+     * @throws MalformedURLException raised if the url is bad.
+     */
     public Root createRoot(File directory) throws RemoteException, MalformedURLException {
         Root root = new RootImpl(directory);
         Naming.rebind("peer2peer", root);

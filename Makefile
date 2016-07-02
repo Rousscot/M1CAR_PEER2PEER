@@ -30,7 +30,7 @@ compPeer:
 	@echo "__COMPILATION OF THE PEER2PEER PROJECT _____________"
 	mkdir -p $(DESFOLDER)
 	$(CC) $(DES) $(SRCCHE) $(SRCFOLDER)/**/*.java
-	$(RMIC) $(DESCHE) $(DES) peer2peer.model.RootImpl
+	$(RMIC) $(DESCHE) $(DES) peer2peer.model.peers.RootImpl
 	@echo "__COMPILATION DONE _________________________________"
 	@echo " "
 
@@ -45,11 +45,11 @@ runClient1:
 	@echo "__RUN THE PEER2PEER PROJECT WITH FIRST FOLDER ______"
 	make jar
 	$(RMICREG) -J-cp -J$(JARNAME) &
-	$(RUNCMD) -jar $(JARNAME) localhost/peer2peer /Users/Cyril/rmiFolder
+	$(RUNCMD) -jar $(JARNAME) localhost /Users/Cyril/rmiFolder
 
 runClient2:
 	@echo "__RUN THE PEER2PEER PROJECT WITH SECOND FOLDER _____"
-	$(RUNCMD) -jar $(JARNAME) localhost/peer2peer /Users/Cyril/rmiFolder2
+	$(RUNCMD) -jar $(JARNAME) localhost /Users/Cyril/rmiFolder2
 
 help:
 	@echo "__HELP ______________________________________________"

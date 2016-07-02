@@ -1,4 +1,7 @@
-package peer2peer.model;
+package peer2peer.model.peers;
+
+import peer2peer.model.buffers.BufferImpl;
+import peer2peer.model.buffers.IBuffer;
 
 import java.io.*;
 import java.nio.file.FileAlreadyExistsException;
@@ -7,6 +10,9 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * I am an implementation of the Peer interface.
+ */
 public class PeerImpl extends UnicastRemoteObject implements Peer {
 
     protected String peerName;
@@ -66,7 +72,7 @@ public class PeerImpl extends UnicastRemoteObject implements Peer {
 
         File newFile = new File(this.directory + "/" + file.getName());
 
-        if(newFile.exists()){
+        if (newFile.exists()) {
             throw new FileAlreadyExistsException(file.getName());
         }
 
