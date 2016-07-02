@@ -21,7 +21,7 @@ public class PeerImpl extends UnicastRemoteObject implements Peer {
     }
 
     @Override
-    public void init(Root root) throws RemoteException{
+    public void init(Root root) throws RemoteException {
         this.root = root;
         this.register(this);
         this.peers = root.getPeers();
@@ -38,7 +38,7 @@ public class PeerImpl extends UnicastRemoteObject implements Peer {
 
     @Override
     public void unregister(Peer peer) throws RemoteException {
-        root.unregister(peer);
+        this.root.unregister(peer);
     }
 
     @Override
@@ -47,7 +47,7 @@ public class PeerImpl extends UnicastRemoteObject implements Peer {
     }
 
     public String getPeerName() throws RemoteException {
-        if(this.peerName == null){
+        if (this.peerName == null) {
             //TODO this is bad :P
             this.peerName = "Peer" + (this.getPeers().size() - 1);
             return this.getPeerName();
@@ -57,28 +57,26 @@ public class PeerImpl extends UnicastRemoteObject implements Peer {
     }
 
     @Override
-    public boolean hasRoot() throws RemoteException {
-        return root.hasRoot();
+    public void checkRoot() throws RemoteException {
+        root.checkRoot();
     }
 
     @Override
-    public IBuffer getBuffer(File file) throws IOException {
-        return new BufferImpl(new FileInputStream(this.directory + "/" + file.getName()));
-    }
+    public void downloadFrom(Peer peer, File file) throws IOException {
 
-    @Override
-    public void download(File file, Peer peer) throws IOException {
+        //TODO FileAlreadyExist ?
+        String destination = this.directory + "/" + file.getName();
+        BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(new File(destination)));
+        IBuffer bis = new BufferImpl(new FileInputStream(destination));
 
-        BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(new File(this.directory + "/" + file.getName())));
-        IBuffer bis = peer.getBuffer(file);
-
-        while(bis.available() > 0)
-        {
-            if(bis.available() > BufferImpl.BLOCKSIZE) {
-                bos.write(bis.read(BufferImpl.BLOCKSIZE));
+        while (bis.available() > 0) {
+            byte[] toSend;
+            if (bis.available() > BufferImpl.BLOCKSIZE) {
+                toSend = bis.read(BufferImpl.BLOCKSIZE);
             } else {
-                bos.write(bis.read(bis.available()));
+                toSend = bis.read(bis.available());
             }
+            bos.write(toSend);
             bos.flush();
         }
         bis.close();

@@ -86,7 +86,7 @@ public class NodeUI extends JFrame {
         panel.add(this.refreshFilesButton);
 
         this.downloadButton = new JButton("Download");
-        this.downloadButton.addActionListener(evt -> download());
+        this.downloadButton.addActionListener(evt -> downloadFile());
         panel.add(this.downloadButton);
     }
 
@@ -125,16 +125,16 @@ public class NodeUI extends JFrame {
         this.files.setListData(localFiles);
     }
 
-    public void download(){
+    public void downloadFile(){
         this.checkRoot();
         Peer selectedPeer = this.peers.getSelectedValue();
         File selectedFile = this.files.getSelectedValue();
         try {
             if (selectedPeer != null && selectedFile != null) {
-                this.peer.download(selectedFile, selectedPeer);
-                JOptionPane.showMessageDialog(this, "The file was downloaded.");
+                this.peer.downloadFrom(selectedPeer, selectedFile);
+                JOptionPane.showMessageDialog(this, selectedFile.getName() + " was downloaded from " + selectedPeer.getPeerName() + ".");
             } else {
-                this.error("You need to select a node and a file.");
+                this.error("You need to select a peer and a file.");
             }
         } catch (IOException e) {
             this.unregister(selectedPeer);
@@ -143,7 +143,7 @@ public class NodeUI extends JFrame {
 
     public void checkRoot() {
         try {
-            this.peer.hasRoot();
+            this.peer.checkRoot();
         } catch (RemoteException e) {
             this.error("The root of the community was disconnect. The client will close.");
             System.exit(104);

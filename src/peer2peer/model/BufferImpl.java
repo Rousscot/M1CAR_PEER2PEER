@@ -9,7 +9,7 @@ public class BufferImpl extends UnicastRemoteObject implements IBuffer {
 
     protected RmiBuffer bis;
 
-    protected final static Integer BLOCKSIZE = 1000;
+    protected final static Integer BLOCKSIZE = 4000;
 
     public BufferImpl(FileInputStream in) throws RemoteException {
         this.bis = new RmiBuffer(in);

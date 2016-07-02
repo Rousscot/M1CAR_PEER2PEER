@@ -20,8 +20,8 @@ public class RootImpl extends PeerImpl implements Root {
     }
 
     @Override
-    public boolean hasRoot() throws RemoteException {
-        return true;
+    public void checkRoot() throws RemoteException {
+        //I am just a stupid method that will throw an error to a Peer if I was disconnected.
     }
 
     @Override

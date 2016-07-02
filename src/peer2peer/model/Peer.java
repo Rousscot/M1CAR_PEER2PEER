@@ -20,9 +20,8 @@ public interface Peer extends Remote {
 
     String getPeerName() throws RemoteException;
 
-    boolean hasRoot() throws RemoteException;
+    void checkRoot() throws RemoteException;
 
-    IBuffer getBuffer(File file) throws IOException;
+    void downloadFrom(Peer peer, File file) throws IOException;
 
-    void download(File file, Peer peer) throws IOException;
 }
